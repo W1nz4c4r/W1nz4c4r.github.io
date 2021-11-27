@@ -95,7 +95,7 @@ social:
 analytics:
   provider               : "google" # false (default), "google", "google-universal", "custom"
   google:
-    tracking_id          : "G-LGMGP5W356"
+    tracking_id          : "G-LE7F6T7JJ1"
     anonymize_ip         : false # (default)
 
 
