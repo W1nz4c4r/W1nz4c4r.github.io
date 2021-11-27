@@ -31,7 +31,7 @@ Después lo que hago es cuadrar mi entorno de trabajo por medio de un script en 
 
 ![](/assets/images/htb-writeup-Grandpa/pic2.png)
 
-##Port Scan
+## Port Scan
 
 A continuación, mando el nmap:
   * nmap -sS -sV -sC -p- -vvv -oA allPorts 10.10.10.14
@@ -62,7 +62,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 # Nmap done at Thu Nov 18 21:32:36 2021 -- 1 IP address (1 host up) scanned in 301.27 seconds
 
 ```
-##Web Site
+## Web Site
 
 Nos metemos a la pagina que esta en el puerto 80 (http), pero nos encontramos con una página que realmente no nos muestra mucho:
 
@@ -72,7 +72,7 @@ Con ayuda del whatweb y con searchsploit encontramos que existen posibles exploi
 
 ![](/assets/images/htb-writeup-Grandpa/pic4.png)
 
-##Shell
+## Shell
 
 Encontramos el exploit en https://github.com/g0rx/iis6-exploit-2017-CVE-2017-7269  el cual lo descargamos y corremos y tenemos acceso a la maquina como el usuario “nt authority\network service”
 
@@ -83,7 +83,7 @@ Para realizar la escalación de privilegios en máquinas Windows normalmente lo 
 
 ![](/assets/images/htb-writeup-Grandpa/pic6.png)
 
-##Privilege escalation
+## Privilege escalation
 
 Lo que mas me llama la atención es que la maquina esta corriendo bajo un OS Windows server 2003. Con ayuda de searchsploit busco sobre Windows server 2003 y nos encontramos con un script en C el cual nos toca compilar y posteriormente nos dará acceso como root.
 
