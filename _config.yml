@@ -102,8 +102,8 @@ analytics:
 # Site Author
 author:
   name             : "W1nz4c4r"
-  avatar           : "/assets/images/avatar.png"
-  bio              : "Pentester, CTF player<br>HackTheBox ATeam"
+  avatar           : "/assets/images/profile.jpeg"
+  bio              : "Pentester in progress, CTF player<br>Hacker - HackTheBox Rank"
   location         : "United States"
   email            : "moralesriky97@gmail.com"
   uri              :
