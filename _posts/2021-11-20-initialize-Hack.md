@@ -16,7 +16,7 @@ tags:
 
 ![](/assets/images/python-scripts/initHACK.png)
 
-initHACK.py is s python3 script I made for myself and its the first step I usually do when I'm on CTF enviroments. The script is divided in 3 parts, the first part is making a ping to the attacked machine and it tell the user if the machine is active and also what machine is (windows, linux). The second part creates 4 folders I always use --> exploits, content, nmap, notes. the final part just copies to the clipboard a nmap I always use to scan an ip.
+**initHACK.py** is s python3 script I made for myself and its the first step I usually do when I'm on CTF enviroments. The script is divided in 3 parts, the first part is making a ping to the attacked machine and it tell the user if the machine is active and also what machine is (windows, linux). The second part creates 4 folders I always use --> exploits, content, nmap, notes. the final part just copies to the clipboard a nmap I always use to scan an ip.
 
 To have a faster access to the script I place it on /usr/bin.
 
@@ -24,8 +24,7 @@ If you want to Clone this repository please refer to: https://github.com/W1nz4c4
 
 
 
-```
-python3
+```python
 
 #!/usr/bin/python3
 #-------Author-------------
