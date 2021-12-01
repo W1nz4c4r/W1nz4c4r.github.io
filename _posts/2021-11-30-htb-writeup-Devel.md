@@ -1,6 +1,6 @@
 ---
 layout: single
-title: Grandpa - Hack The Box
+title: Devel - Hack The Box
 excerpt: "Devel is an Windows machine that is cataloged as easy. In this case, we are going to take advantage of ftp (port 21) that allows anonymous login and let us as attackers upload a web shell and we will be in as the user 'iis appol \ web'. Then with a little help of Windows exploit suggester we get access as root user."
 date: 2021-11-30
 classes: wide
