@@ -20,7 +20,7 @@ tags:
 
 To have a faster access to the script I place it on **/usr/bin.**
 
-If you want to Clone this repository please refer to[initHack en github](https://github.com/W1nz4c4r/initHACK)
+If you want to Clone this repository please refer to [initHack en github](https://github.com/W1nz4c4r/initHACK)
 
 
 
