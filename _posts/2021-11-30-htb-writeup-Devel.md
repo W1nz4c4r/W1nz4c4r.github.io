@@ -77,12 +77,14 @@ Then I check the web page (port 80) and I realized that what is on the FTP seems
 ## Gaining Foothold
 
 We'll create a test file and check if we can upload files to the web server.
-  * test.html:
+
 ```
 <html>
   <h1> Test </h1>
 </html>
 ```
+
+
 upload the file through ftp:
 
 
