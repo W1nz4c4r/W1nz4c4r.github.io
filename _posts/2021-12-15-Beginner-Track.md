@@ -27,14 +27,14 @@ tags:
   -
 ---
 
-![](assets/images/Beginner-Track/Beginner-Track-Logo.png)
+![](/assets/images/Beginner-Track/Beginner-Track-Logo.png)
 
 # Hack The Box - Beginner Track
 
 We are going to Make Beginner Track from Hack The Box which has 4 machines and 6 challenges.
 
 
-![](assets/images/Beginner-Track/List-Path.png)
+![](/assets/images/Beginner-Track/List-Path.png)
 
 ## Lame
 
@@ -42,9 +42,9 @@ Machine IP = 10.10.10.3
 
 As always we start with init hack with is gonna well us determine which machine are we attacking as well as it is going to create the environment in which we are going to work.
 
-![](assets/images/Beginner-Track/pic1.png)
+![](/assets/images/Beginner-Track/pic1.png)
 
-We can see that according we will be working against a *linux machine*. Now after doing some basic steps, We start by sending some nmaps commands to start checking the network:
+We can see that according we will be working against a **linux machine**. Now after doing some basic steps, We start by sending some nmaps commands to start checking the network:
 
   * nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.10.3
 
