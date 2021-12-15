@@ -12,7 +12,7 @@ excerpt: "We are gonna do Hack The Box Beginner Track , which consist on 10 chal
   * Blue
   * Like Tommy
   * Ropme"
-date: 2021-11-26
+date: 2021-12-15
 classes: wide
 header:
   teaser: assets/images/Beginner-Track/Beginner-Track-Logo.png
