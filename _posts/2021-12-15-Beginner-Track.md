@@ -111,3 +111,16 @@ Service detection performed. Please report any incorrect results at https://nmap
 
 
 ```
+### Enumeration
+
+I usually start by checking the port which I'm more comfortable and in this case it would be *ftp* (port 21).The nmap scan shows that ftp allows Anonymous login, but when we check the service we don't find anything interesting.
+
+![](/assets/images/Beginner-Track/pic2.png)
+
+the next thing that drives my attention is port 445 is running a **Samba 3.0.20** so I use searchsploit to see if there is any vulnerability on that exact  version.
+
+
+![](/assets/images/Beginner-Track/pic3.png)
+
+
+We can see that there are some possible exploits for *samba 3.0.20* but none of the search work for us because we are not going to use metasploit on this machine.
