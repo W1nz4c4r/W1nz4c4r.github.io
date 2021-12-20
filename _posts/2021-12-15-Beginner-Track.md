@@ -125,7 +125,7 @@ the next thing that drives my attention is port 445 is running a **Samba 3.0.20*
 
 We can see that there are some possible exploits for *samba 3.0.20* but none of the search work for us because we are not going to use metasploit on this machine. We do the same search on google and we find a exploit that works on :
 
-  * https://github.com/macha97/exploit-smb-3.0.20/blob/master/exploit-smb-3.0.20.py
+  * <https://github.com/macha97/exploit-smb-3.0.20/blob/master/exploit-smb-3.0.20.py>
 
 ### Gaining Foothold
 
