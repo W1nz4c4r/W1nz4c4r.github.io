@@ -125,7 +125,7 @@ the next thing that drives my attention is port 445 is running a **Samba 3.0.20*
 
 We can see that there are some possible exploits for *samba 3.0.20* but none of the search work for us because we are not going to use metasploit on this machine. We do the same search on google and we find a exploit that works on :
 
-  * <https://github.com/macha97/exploit-smb-3.0.20/blob/master/exploit-smb-3.0.20.py>
+  * [https://github.com/macha97/exploit-smb-3.0.20/blob/master/exploit-smb-3.0.20.py](https://github.com/macha97/exploit-smb-3.0.20/blob/master/exploit-smb-3.0.20.py)
 
 ### Gaining Foothold
 
@@ -139,3 +139,36 @@ The only thing that we need to change in this exploit is the payload with the co
 Run the exploit and we are in as **root**
 
 ![](/assets/images/Beginner-Track/pic5.png)
+
+
+
+
+## Find The Easy pass
+This is an easy *reversing* challenge in which we will need to use **OllyDGB** with is a debbuging tool used to *analyze binary code* despite not having access to the source code. this tool is mostly used to evaluate and debug malware.
+
+In this case I'm going to use a windows machine because in my case was a lot easier to user **OllyDGB** on a windows machine.
+First, we need to download and unzip the file.
+
+![](/assets/images/Beginner-Track/pic6.png)
+
+When we run the program we can't see much about it, it just ask us for a password and when you enter the incorrect password it prompt the user with **Wrong password!**.
+
+![](/assets/images/Beginner-Track/pic7.png)
+
+Open *OllyDGB* and upload the .exe  to the program.
+
+![](/assets/images/Beginner-Track/pic8.png)
+
+We can see that everything is assembly language but after looking for a while on the program you can found that the there are some comments in ASCII characters (Human readable).
+
+![](/assets/images/Beginner-Track/pic9.png)
+
+We place a debug point exactly where we found the first ASCII comment, in this way we will be able to see how the flow of the program is going.
+
+![](/assets/images/Beginner-Track/pic10.png)
+
+We can see on the orange arrow the password we just entered (*hackthebox*) which prompts **Wrong password!**, but on the purple we can see a possible password  (fortran!).
+
+We run the program again but in this case we try the *new password found* (fortran!) and we got **good job. Congratulations!**
+
+![](/assets/images/Beginner-Track/pic11.png)
