@@ -144,9 +144,9 @@ Run the exploit and we are in as **root**
 
 
 ## Find The Easy pass
-This is an easy *reversing* challenge in which we will need to use **OllyDGB** with is a debbuging tool used to *analyze binary code* despite not having access to the source code. this tool is mostly used to evaluate and debug malware.
+This is an easy *reversing* challenge in which we will need to use **OllyDGB** which is a debbuging tool used to *analyze binary code* despite not having access to the source code. this tool is mostly used to evaluate and debug malware.
 
-In this case I'm going to use a windows machine because in my case was a lot easier to user **OllyDGB** on a windows machine.
+In this case I'm going to use a windows machine because in my case was a lot easier to use **OllyDGB** on a windows machine.
 First, we need to download and unzip the file.
 
 ![](/assets/images/Beginner-Track/pic6.png)
@@ -172,3 +172,23 @@ We can see on the orange arrow the password we just entered (*hackthebox*) which
 We run the program again but in this case we try the *new password found* (fortran!) and we got **good job. Congratulations!**
 
 ![](/assets/images/Beginner-Track/pic11.png)
+
+
+## Weak rsa
+this is an easy *crypto challenge* in which we will need to use an specific tool to get the desired flag. RSA is an **asymetric cryptographic algorithm** this means it uses 2 keys for encryption
+
+First we need to download and unzip the provided file.
+
+![](/assets/images/Beginner-Track/pic12.png)
+
+we find two files:
+
+  * **flag.enc** = Encrypted file that contains the desired flag
+  * **key.pub** = the public key that was used to encrypt the flag.encrypt
+
+At the beginning of the challenge what I did was to use *openssl* to try to decrypt the flag, but after some time working on it nothing seems to work so I started to look for other alternatives.
+I found an **RSA decryption utility** on  [GitHub](https://github.com/Ganapati/RsaCtfTool)
+
+Install requirements run **RsaCtfTool** and at the end you can find the desired flag.
+
+![](/assets/images/Beginner-Track/pic13.png)
