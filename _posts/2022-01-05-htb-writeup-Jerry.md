@@ -50,7 +50,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 
 As we can see the only port open is the port 8080 and it is an *http* service. We go to http://10.10.10.95:8080/ and we find ourselves on the apache tomcat default page.
 
-![](/assets/images/Beginner-Track/pic1.png)
+![](/assets/images/htb-writeup-Jerry/pic1.png)
 
 By default when I see this tomcat page I'll go to http://10.10.10.95:8080/manager or the other option is to click on **Manager App** button. This will prompt us for some credentials, some of the default credentials you can find them [here](https://github.com/netbiosX/Default-Credentials/blob/master/Apache-Tomcat-Default-Passwords.mdown).
 
@@ -58,26 +58,26 @@ The credentials I used in this case to get access where:
   * **user** = tomcat
   * **password** = s3cret
 
-![](/assets/images/Beginner-Track/pic2.png)
+![](/assets/images/htb-writeup-Jerry/pic2.png)
 
 After entering the correct credentials we got access to **tomcat web application manager**
 
-![](/assets/images/Beginner-Track/pic3.png)
+![](/assets/images/htb-writeup-Jerry/pic3.png)
 
 ## Gaining FoodHold
 
 To gain access to the machine all that is need to be done is to upload a war file that connects to our machine. To create this file we will use msfvenom to create the *reverse shell* file .war
 
-![](/assets/images/Beginner-Track/pic4.png)
+![](/assets/images/htb-writeup-Jerry/pic4.png)
 
 Then, we need to upload the revshell.war
 
-![](/assets/images/Beginner-Track/pic5.png)
+![](/assets/images/htb-writeup-Jerry/pic5.png)
 
 To gain access to the machine all we need to do is to activate the on your machine **nc** on the desired port and then access to http://10.10.10.95/revshell/
 
-![](/assets/images/Beginner-Track/pic6.png)
+![](/assets/images/htb-writeup-Jerry/pic6.png)
 
 **You are in as nt authority system**.To fing *both* flags you need to go to the Administrator Desktop and you will find *2 for the price of 1.txt*
 
-![](/assets/images/Beginner-Track/pic7.png)
+![](/assets/images/htb-writeup-Jerry/pic7.png)
