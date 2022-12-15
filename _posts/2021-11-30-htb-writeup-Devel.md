@@ -20,7 +20,7 @@ tags:
 
 ![](/assets/images/htb-writeup-Devel/logo.png)
 
-Devel is an Windows machine that is cataloged as easy. In this case, we are going to take advantage of ftp (port 21) that allows anonymous login and let us as attackers upload a web shell and we will be in as the user 'iis appol \web'. Then with a little help of Windows exploit suggester we get access as root user.
+DDDDDDevel is an Windows machine that is cataloged as easy. In this case, we are going to take advantage of ftp (port 21) that allows anonymous login and let us as attackers upload a web shell and we will be in as the user 'iis appol \web'. Then with a little help of Windows exploit suggester we get access as root user.
 
 Machine IP = 10.10.10.5
 
