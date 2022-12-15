@@ -29,6 +29,7 @@ tags:
 ## Port Scan 
 we start with our usual NMAP scan:
 - sudo nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.136
+
 ```
 # Nmap 7.92 scan initiated Fri Dec  9 08:14:08 2022 as: nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.136
 Nmap scan report for 10.10.11.136
