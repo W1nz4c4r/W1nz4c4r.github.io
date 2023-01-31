@@ -111,7 +111,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 
 ## Enumeration
 
-If we look into the result we are able to find some domains such as **dc01.timelapse.htb** & **timelaps.htb**, which we are going to add to **/etc/hosts**
+If we look into the result we are able to find some domains such as **dc01.timelapse.htb** & **timelaps.htb**, which we are going to add to **/etc/hosts**!
 
 ![](/assets/images/htb-writeup-Timelapse/pic01.png)
 
@@ -138,3 +138,4 @@ fcrackzip -D -p /usr/share/wordlists/rockyou.txt -u winrm_backup.zip
 We are able to crack the password needed for the file:
 * supremelegacy
 
+after unzipping the file we find a file named **legacyy_dev_auth.pfx**, if you want to learn more about LAPS on windows visit [Link1](https://www.howtouselinux.com/post/pfx-file-with-examples) or [Link2](https://www.ibm.com/docs/en/arl/9.7?topic=certification-extracting-certificate-keys-from-pfx-file)

@@ -27,7 +27,7 @@ tags:
 
 
 ## Port Scan 
-we start with our usual NMAP scan:
+we start with our usual NMAP scan!!:
 * sudo nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.136
 
 ```
