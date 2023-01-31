@@ -86,7 +86,6 @@ We test the credentials found on SMTP. I got access on ssh (***port 22***) and c
 
  ![](/assets/images/htb-writeup-Pandora/pandora5.png)
 
-## Enumeration for privilege escalation
 
 I check daniel privileges and permisions but i did not find anything interesting. So I decide to look for the web page that was on port 80 to see if I can find something interesting and we find "another" web server that could potentially be active
 
