@@ -139,3 +139,68 @@ We are able to crack the password needed for the file:
 * supremelegacy
 
 after unzipping the file we find a file named **legacyy_dev_auth.pfx**, if you want to learn more about LAPS on windows visit [Link1](https://www.howtouselinux.com/post/pfx-file-with-examples) or [Link2](https://www.ibm.com/docs/en/arl/9.7?topic=certification-extracting-certificate-keys-from-pfx-file)
+
+
+now we try now to extract the keys (Private key and public Cert) but it is asking for a password. To crack this password we can user pfx2john on in my case I prefered to use [crackpkcs12](https://github.com/crackpkcs12/crackpkcs12)
+
+```
+crackpkcs12 -v  -d /usr/share/wordlists/rockyou.txt legacyy_dev_auth.pfx
+```
+
+![](/assets/images/htb-writeup-Timelapse/pic06.png)
+
+Now that we have the password of the file, we just follow the instructions from one of the links previously provided and get are able to extract the private key and the certificate
+
+```
+openssl pkcs12 -in legacyy_dev_auth.pfx  -nocerts -out Lprivate.key
+
+openssl pkcs12 -in legacyy_dev_auth.pfx  -clcerts -nokeys -out certificate.crt
+
+```
+![](/assets/images/htb-writeup-Timelapse/pic07.png)
+
+
+If we check evil-winrm, it has options such as:
+- -S --> enable SSL
+- -c --> public key certificate
+- -k --> privatate key certificate
+ usign the two certicates we just got we are able to login to the machine as **Legacyy**
+
+ ![](/assets/images/htb-writeup-Timelapse/pic08.png)
+
+while doing some basic enumeration I counter some interesing group (LAPS_Readers) taking into account the name of the machine. 
+```
+net gruoups
+```
+![](/assets/images/htb-writeup-Timelapse/pic09.png)
+I make futher investigation on that specific group and i realized that the user ***svc_deploy*** is part of that specific group
+
+```
+net groups LAPS_Readers
+
+```
+![](/assets/images/htb-writeup-Timelapse/pic10.png)
+
+If we run winPEAS.exe on the machine and it will tell us to look to an specific path:
+- C:\Users\legacyy\appdata\roaming\microsoft\windows\powershell\psreadline4
+we will be able to find the file consoleHosto_history.txt and find ***svc_deploy*** credentials
+
+![](/assets/images/htb-writeup-Timelapse/pic11.png)
+
+
+- user: svc_deploy
+- pass: 'E3R$Q62^12p7PLlC%KWaxuaV'
+
+we test the credentials on evil-winrm and it works. We are in !!!
+```
+evil-winrm -u svc_deploy -p 'E3R$Q62^12p7PLlC%KWaxuaV' -S -i 10.10.11.152
+```
+
+now that we as svc_deploy we are part of LAPS_Reader we user a powershell [script](https://github.com/kfosaaen/Get-LAPSPasswords) to get the passwords stored
+
+![](/assets/images/htb-writeup-Timelapse/pic12.png)
+
+now we just need to take the password and login as Administrator
+
+
+![](/assets/images/htb-writeup-Timelapse/pic13.png)
