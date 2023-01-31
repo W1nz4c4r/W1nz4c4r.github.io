@@ -2,7 +2,7 @@
 layout: single
 title: Timelapse - Hack The Box
 excerpt: "Timelapse is considered a easy windows machine, We beging this be finding a pfx file in the shared SMB with null authentification. After getting the file we are able to extract the private key and the cert form it. Then we login as legacyy to the machine using evil-winrm over ssl. To gain access to Administrator we are able to find some credentials that lets us login with the user svc_deploy and using his privilege as LAPS_reader (group) then we are able to get admins 'temp' password"
-date: 2023-01-32
+date: 2023-01-31
 classes: wide
 header:
   teaser: /assets/images/htb-writeup-Timelapse/timelapse-logo.png
