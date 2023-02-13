@@ -20,7 +20,7 @@ tags:
 
 ---
 
-![](/assets/images/htb-writeup-Late/Late-logo.png)
+![](/assets/images/htb-writeup-Late/Late-Logo.png)
 
 ### Machine IP = 10.10.11.156
 
@@ -69,19 +69,17 @@ We find a new page that is a image to text converter with [flask](https://python
 
 We start checking the photo to text conversion and it does change whatever we see on the picture. Now we try to upload a new picture writting the following basic SSTI:
 
-```
-{{7*7}}
-```
+* {{7*7}}
+
 
 When we download the ***result.txt*** file we can see that the basic injection of 7 * 7 is "processed" and its showing the result of the injection
 
 ![](/assets/images/htb-writeup-Late/Late-3.png)
 
-after trying multiple injections, multiple backgrounds and multiple fonts to make the injection work we are able to read the **/etc/passwod** file
+after trying multiple injections, multiple backgrounds and multiple fonts to make the injection work we are able to read the **/etc/passwd** file
 
-```
-{{get_flashed_messages.__globals__.__builtins__.open("/etc/passwd").read()}}
-```
+* {{get_flashed_messages.__globals__.__builtins__.open("/etc/passwd").read()}}
+
 
 ![](/assets/images/htb-writeup-Late/Late-4.png)
 
@@ -91,13 +89,13 @@ From the same we can we that the only possible user appart from root that we can
 
 
 Now that we know the user we can try to get its id_rsa key in case it is created
-```
-{{get_flashed_messages.__globals__.__builtins__.open("/home/svc_acc/.ssh/id_rsa").read()}}
-```
+
+* {{get_flashed_messages.__globals__.__builtins__.open("/home/svc_acc/.ssh/id_rsa").read()}}
+
 ![](/assets/images/htb-writeup-Late/Late-6.png)
 
 
-with the id_rsa key and the username for sure we can now login to the machine using the **-i** flag on evil-winrm, and we are able to get **user.txt** flag.
+with the id_rsa key and the username for sure we can now login to the machine using the **-i** flag on ssh, and we are able to get **user.txt** flag.
 ![](/assets/images/htb-writeup-Late/Late-7.png)
 
 
