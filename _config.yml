@@ -19,7 +19,7 @@ locale                   : "en-US"
 title                    : "W1nz4c4r "
 title_separator          : "-"
 name                     : "W1nz4c4r"
-description              : "Articulos sobre ciberseguridad y CTFs"
+description              : "HTB Write-Ups, Hacking & Fun"
 url                      : "https://w1nz4c4r.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "W1nz4c4r/W1nz4c4r.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
@@ -103,7 +103,7 @@ analytics:
 author:
   name             : "W1nz4c4r"
   avatar           : "/assets/images/cyber dead.jpg"
-  bio              : "Pentester in progress, CTF player<br>Hacker - HackTheBox Rank"
+  bio              : "Pentester, CTF player, <br>Hacker - HackTheBox Rank</br>, cyber Security Enthusiast"
   location         : "United States"
   email            : "moralesriky97@gmail.com"
   uri              :
