@@ -1,6 +1,6 @@
 ---
 layout: single
-title: Python script - initialize Hack
+title: initHACK - Automate Pentesting Folder Setup and Nmap Scans.
 excerpt: "This Python script streamlines the initial setup for penetration testing by automating folder creation and Nmap scan configuration. It saves you time by handling repetitive tasks, allowing you to focus on the actual testing process."
 date: 2024-05-14
 classes: wide
@@ -14,7 +14,7 @@ tags:
   - Workspace - automation 
 ---
 
-# initHACK: Automate Pentesting Folder Setup and Nmap Scans.
+
 
 This Python script streamlines the initial setup for penetration testing by automating folder creation and Nmap scan configuration. It saves you time by handling repetitive tasks, allowing you to focus on the actual testing process.
 
